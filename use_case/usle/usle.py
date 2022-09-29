@@ -3,163 +3,132 @@ import lue.data_model as ldm
 import lue.framework as lfr
 import docopt
 import numpy as np
-import json
 import os.path
 import sys
 
 
 def rainfall_erosivity_factor(
+        array_shape,
         partition_shape):
-
-    array_shape = (3000, 3000)
-    result = lfr.create_array(
+    """
+    Measure for the energy of raindrops hitting the soil and the rate of associated runoff
+    """
+    # For now, use the global mean value: 2190 MJ mm ha-1 h-1 yr-1
+    return lfr.create_array(
         array_shape=array_shape, partition_shape=partition_shape,
-        dtype=np.dtype(np.float32), fill_value=1.1)
-    print(lfr.minimum(result).get())
-
-    return result
+        dtype=np.dtype(np.float32), fill_value=2190)
 
 
 def soil_erodibility_factor(
+        array_shape,
         partition_shape):
-
-    array_shape = (3000, 3000)
-    result = lfr.create_array(
+    """
+    Measure for the erodibility
+    """
+    # For now, use 0.2
+    return lfr.create_array(
         array_shape=array_shape, partition_shape=partition_shape,
-        dtype=np.dtype(np.float32), fill_value=2.2)
-
-    return result
+        dtype=np.dtype(np.float32), fill_value=0.2)
 
 
 def slope_length(
+        dem,
+        cell_size,
         partition_shape):
+    """
+    Measure for length of the slope
 
-    array_shape = (3000, 3000)
-    result = lfr.create_array(
-        array_shape=array_shape, partition_shape=partition_shape,
-        dtype=np.dtype(np.float32), fill_value=3.3)
+    High values imply high erosion rates
+    """
+    # Note: In case the DEM contains pits, streams won't continue from mountain tops to outlets
+    # TODO fill sinks
+    flow_direction = lfr.d8_flow_direction(dem)
+    material = lfr.create_array(
+        array_shape=dem.shape, partition_shape=partition_shape, dtype=dem.dtype, fill_value=1)
+    flow_accumulation = lfr.accu3(flow_direction, material)
+    m = 0.4  # [0.2 - 0.6]
 
-    return result
+    return lfr.pow((flow_accumulation * cell_size) / 22.13, m)
 
 
 def slope_gradient(
+        dem,
+        cell_size):
+    """
+    Measure for steepness of the slope
+
+    High values imply high erosion rates
+    """
+    slope = lfr.slope(dem, cell_size) * 100  # Percentages
+    n = 1.15  # [1.0 - 1.3]
+
+    # TODO This results in no-data when slopes are steep
+    return lfr.pow(lfr.sin(slope * 0.01745) / 0.09, n)
+
+
+def topographic_factor(
+        dem,
+        cell_size,
         partition_shape):
+    """
+    High values imply high erosion rates
+    """
+    l = slope_length(dem, cell_size, partition_shape)
+    s = slope_gradient(dem, cell_size)
 
-    array_shape = (3000, 3000)
-    result = lfr.create_array(
-        array_shape=array_shape, partition_shape=partition_shape,
-        dtype=np.dtype(np.float32), fill_value=4.4)
-
-    return result
+    return (l * s) / 100
 
 
 def cropping_management_factor(
+        array_shape,
         partition_shape):
+    """
+    Measure for the effectiveness of soil and crop management systems in preventing soil loss
 
-    array_shape = (3000, 3000)
-    result = lfr.create_array(
+    Look-up of value by land cover class
+    """
+    # For now, just use 0.4 (shrubs)
+    return lfr.create_array(
         array_shape=array_shape, partition_shape=partition_shape,
-        dtype=np.dtype(np.float32), fill_value=5.5)
-
-    return result
+        dtype=np.dtype(np.float32), fill_value=0.4)
 
 
-def concervation_practices_factor(
+def conservation_practices_factor(
+        array_shape,
         partition_shape):
+    """
+    Measure for the effectiveness of practices to reduce the amount and rate of water runoff
 
-    array_shape = (3000, 3000)
-    result = lfr.create_array(
+    High values imply low erosion rates.
+    """
+    # For now, just use 1
+    return lfr.create_array(
         array_shape=array_shape, partition_shape=partition_shape,
-        dtype=np.dtype(np.float32), fill_value=6.6)
-
-    return result
-
-
-def write_translate_json(
-        dataset_pathname,
-        phenomenon_name,
-        property_set_name,
-        layer_names):
-    """
-    Create the file that lue_translate currently needs for exporting
-    an array from a LUE dataset to a GDAL raster
-    """
-    dataset_directory_pathname, dataset_basename = os.path.split(dataset_pathname)
-    dataset_basename = os.path.splitext(dataset_basename)[0]
-
-    object_ = {
-        dataset_basename: {
-            "phenomena": [
-                {
-                    "name": phenomenon_name,
-                    "property_sets": [
-                        {
-                            "name": property_set_name,
-                            "properties": [
-                                { "name": layer_name for layer_name in layer_names}
-                             ]
-                        }
-                    ]
-                }
-            ]
-        }
-    }
-
-    meta_pathname = os.path.join(dataset_directory_pathname, dataset_basename + ".json")
-
-    open(meta_pathname, "w", encoding="utf8").write(json.dumps(object_, indent=4))
-
-
-def write_usle_results(
-        io_tuples,
-        dataset_pathname):
-
-    phenomenon_name = "area"
-    property_set_name = "area"
-    array_shape = io_tuples[0][0].shape
-    space_box = [0, 0, *array_shape]
-
-    dataset = ldm.create_dataset(dataset_pathname)
-    raster_view = ldm.hl.create_raster_view(
-        dataset, phenomenon_name, property_set_name, array_shape, space_box)
-
-    for array, layer_name in io_tuples:
-        raster_view.add_layer(layer_name, array.dtype)
-        array_pathname = "{}/{}/{}/{}".format(
-            dataset_pathname, phenomenon_name, property_set_name, layer_name)
-        lfr.write_array(array, array_pathname)
-
-    write_translate_json(
-        dataset_pathname, phenomenon_name, property_set_name, [layer_name for _, layer_name in io_tuples])
+        dtype=np.dtype(np.float32), fill_value=1)
 
 
 @lfr.runtime_scope
 def usle(
-        partition_shape,
-        dataset_pathname):
+        dem_pathname,
+        soil_loss_pathname,
+        partition_shape):
 
     # The HPX runtime is started on all localities. This function is only called on the root
     # locality.
 
-    r = rainfall_erosivity_factor(partition_shape)
-    k = soil_erodibility_factor(partition_shape)
-    l = slope_length(partition_shape)
-    s = slope_gradient(partition_shape)
-    c = cropping_management_factor(partition_shape)
-    p = concervation_practices_factor(partition_shape)
+    dem = lfr.from_gdal(dem_pathname, partition_shape)
+    cell_size = 10
 
-    a = r * k * l * s * c * p
+    r = rainfall_erosivity_factor(dem.shape, partition_shape)
+    k = soil_erodibility_factor(dem.shape, partition_shape)
+    ls = topographic_factor(dem, cell_size, partition_shape)
+    c = cropping_management_factor(dem.shape, partition_shape)
+    p = conservation_practices_factor(dem.shape, partition_shape)
 
-    io_tuples = [
-        (r, "rainfall_erosivity"),
-        (k, "soil_erodibility"),
-        (l, "slope_length"),
-        (s, "slope_gradient"),
-        (c, "cropping_management"),
-        (p, "concervation_practices"),
-        (a, "erosivity"),
-    ]
-    write_usle_results(io_tuples, dataset_pathname)
+    # Same as on Wikipedia!
+    a = r * k * ls * c * p
+
+    lfr.to_gdal(a, soil_loss_pathname, dem_pathname)
 
     # The HPX runtime will be stopped automatically on all localities once the computations
     # are done.
@@ -169,23 +138,14 @@ usage = """\
 Calculate the soil loss of an area using the USLE
 
 Usage:
-    {command} --partition_extent=<nr_cells> <dataset>
+    {command} <nr_cells> <dem> <soil_loss>
 
 Options:
-    partition_extent=<nr_cells>  Size of one side of the partitions: nr_cells
-    <dataset>                    Pathname of dataset to write result to
+    <nr_cells>   Size of one side of the partitions
+    <dem>        Pathname of input digital elevation model
+    <soil_loss>  Pathname of output soil loss raster
 """.format(
     command = os.path.basename(sys.argv[0]))
-
-
-# def parse_tuple(string):
-# 
-#     return tuple([token.strip() for token in string.split(",")])
-# 
-# 
-# def parse_shape(string):
-# 
-#     return tuple([int(element) for element in parse_tuple(string)])
 
 
 def main():
@@ -193,13 +153,14 @@ def main():
     argv = [arg for arg in sys.argv[1:] if not arg.startswith("--hpx")]
     arguments = docopt.docopt(usage, argv)
 
-    partition_extent = int(arguments["--partition_extent"])
+    partition_extent = int(arguments["<nr_cells>"])
     assert partition_extent > 0
     partition_shape = 2 * (partition_extent,)
 
-    dataset_pathname = arguments["<dataset>"]
+    dem_pathname = arguments["<dem>"]
+    soil_loss_pathname = arguments["<soil_loss>"]
 
-    usle(partition_shape, dataset_pathname)
+    usle(dem_pathname, soil_loss_pathname, partition_shape)
 
 
 if __name__ == "__main__":
