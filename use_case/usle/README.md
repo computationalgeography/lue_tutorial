@@ -9,7 +9,7 @@ for an example of running the script on a single computer.
 Note how the statement for calculating the anual soil loss in [usle.py](usle.py) matches the
 one from the literature:
 
-$$A = R * K * L * S * C * P$$
+$$A = R \times K \times L \times S \times C \times P$$
 
 With:
 
