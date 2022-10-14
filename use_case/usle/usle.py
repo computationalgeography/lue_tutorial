@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-import lue.data_model as ldm
 import lue.framework as lfr
 import docopt
 import numpy as np
