@@ -1,0 +1,10 @@
+name: lue_tutorial
+channels:
+- conda-forge
+- defaults
+dependencies:
+- docopt
+- gdal
+- ipython  # Optional
+- matplotlib
+- lue>=0.3.4
