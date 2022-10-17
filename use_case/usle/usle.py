@@ -112,7 +112,7 @@ def usle(
         soil_loss_pathname,
         partition_shape):
 
-    # The HPX runtime is started on all localities. This function is only called on the root
+    # The runtime is started on all localities. This function is only called on the root
     # locality.
 
     dem = lfr.from_gdal(dem_pathname, partition_shape)
@@ -129,7 +129,7 @@ def usle(
 
     lfr.to_gdal(a, soil_loss_pathname, dem_pathname)
 
-    # The HPX runtime will be stopped automatically on all localities once the computations
+    # The runtime will be stopped automatically on all localities once the computations
     # are done.
 
 

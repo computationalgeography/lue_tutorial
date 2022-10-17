@@ -31,10 +31,11 @@ def save_generation(
 def next_generation(
         generation):
 
-    # A 3x3 kernel (radius 1), filled with ones, except for the focal cell
-    kernel = np.full((3, 3), 1, dtype=np.uint8)
-    kernel[1][1] = 0
-
+    kernel = np.array([
+            [1, 1, 1],
+            [1, 0, 1],
+            [1, 1, 1],
+        ], dtype=np.uint8)
     nr_alive_cells = lfr.focal_sum(generation, kernel)
 
     # Next state of currently alive cells
@@ -60,7 +61,7 @@ def game_of_life(
         nr_generations,
         generation_pathname):
 
-    # The HPX runtime is started on all localities. This function is only called on the root
+    # The runtime is started on all localities. This function is only called on the root
     # locality.
 
     generation = initialize_generation(array_shape, partition_shape)
@@ -71,7 +72,7 @@ def game_of_life(
         generation = next_generation(generation)
         save_generation(generation, generation_pathname, g)
 
-    # The HPX runtime will be stopped automatically on all localities once the computations
+    # The runtime will be stopped automatically on all localities once the computations
     # are done.
 
 
