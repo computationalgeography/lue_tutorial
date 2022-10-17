@@ -5,6 +5,8 @@ channels:
 dependencies:
 - docopt
 - gdal
+- imageio
 - ipython  # Optional
 - matplotlib
 - lue>=0.3.4
+- rasterio
