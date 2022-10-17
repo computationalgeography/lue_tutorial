@@ -34,7 +34,6 @@ Whenever useful and possible, LUE schedules calculations from multiple operation
 at the same time.
 
 See also:
-- https://lue.computationalgeography.org
 - https://en.wikipedia.org/wiki/Universal_Soil_Loss_Equation
 
 ![Indication of soil loss: Tirol (Austria)](erosivity_tirol.png "Indication of soil loss: Tirol (Austria)")
