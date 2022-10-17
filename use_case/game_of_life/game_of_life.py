@@ -31,26 +31,24 @@ def save_generation(
 def next_generation(
         generation):
 
-    # Depends on https://github.com/computationalgeography/lue/issues/513
+    # A 3x3 kernel (radius 1), filled with ones, except for the focal cell
+    kernel = np.full((3, 3), 1, dtype=np.uint8)
+    kernel[1][1] = 0
 
-    ### # A 3x3 Moore neighbourhood (radius 1)
-    ### neighbourhood = lfr.moore_neighbourhood(1)
+    nr_alive_cells = lfr.focal_sum(generation, kernel)
 
-    ### # This count includes the center cell itself!
-    ### nr_alive_cells = lfr.focal_sum(generation, neighbourhood)
+    # Next state of currently alive cells
+    underpopulated = nr_alive_cells < 2
+    overpopulated = nr_alive_cells > 3
 
-    ### # Next state of currently alive cells
-    ### underpopulated = nr_alive_cells < 3  # "fewer than two"
-    ### overpopulated = nr_alive_cells > 4  # "more than three"
+    # Next state of currently dead cells
+    reproducing = nr_alive_cells == 3
 
-    ### # Next state of currently dead cells
-    ### reproducing = nr_alive_cells == 4  # "three live neighbours"
-
-    ### generation = lfr.where(generation,
-    ###         # True if alive and not under/overpopulated
-    ###         not (underpopulated or overpopulated),
-    ###         # True if dead with three neighbours
-    ###         reproducing)
+    generation = lfr.where(generation,
+            # True if alive and not under/overpopulated
+            ~ (underpopulated | overpopulated),
+            # True if dead with three neighbours
+            reproducing)
 
     return generation
 
