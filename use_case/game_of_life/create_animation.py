@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 import docopt
 import imageio.v2 as iio
-import matplotlib.animation as animation
 from matplotlib.colors import ListedColormap
 import matplotlib.pyplot as plt
 import numpy as np
@@ -29,29 +28,6 @@ def read_raster(
 
 
 def create_animation(
-        raster_pathname,
-        nr_rasters,
-        animation_pathname):
-
-    figure, axis = plt.subplots()
-    images = []
-
-    for i in range(nr_rasters + 1):
-        image = axis.imshow(read_raster(raster_pathname, i), animated=True)
-
-        if i == 0:
-            # Show an initial one first
-            axis.imshow(read_raster(raster_pathname, i))
-
-        images.append([image])
-
-    animation_ = animation.ArtistAnimation(figure, images, interval=50, blit=True, repeat_delay=1000)
-
-    animation_.save(animation_pathname)
-    plt.close()
-
-
-def create_animation2(
         raster_pathname,
         nr_rasters,
         animation_pathname):
@@ -107,7 +83,7 @@ def main():
 
     animation_pathname = arguments["<animation>"]
 
-    create_animation2(raster_pathname, nr_rasters, animation_pathname)
+    create_animation(raster_pathname, nr_rasters, animation_pathname)
 
 
 if __name__ == "__main__":
