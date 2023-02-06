@@ -11,31 +11,24 @@ import os.path
 import sys
 
 
-def slice_pathname(
-        pathname,
-        idx):
+def slice_pathname(pathname, idx):
 
     return "{}-{}.tif".format(pathname, idx)
 
 
-def read_raster(
-        raster_pathname,
-        idx):
+def read_raster(raster_pathname, idx):
 
     dataset = gdal.Open(slice_pathname(raster_pathname, idx))
 
     return np.array(dataset.GetRasterBand(1).ReadAsArray())
 
 
-def create_animation(
-        raster_pathname,
-        nr_rasters,
-        animation_pathname):
+def create_animation(raster_pathname, nr_rasters, animation_pathname):
 
     colours = [
-            [216, 222, 233, 0.05],  # Dead cells: almost transparent nord4
-            [191, 97, 106, 1.0],  # Alive cells: nord11
-        ]
+        [216, 222, 233, 0.05],  # Dead cells: almost transparent nord4
+        [191, 97, 106, 1.0],  # Alive cells: nord11
+    ]
     colour_map = ListedColormap(colours)
 
     with iio.get_writer(animation_pathname, mode="i", fps=4) as writer:
@@ -43,8 +36,13 @@ def create_animation(
 
             figure, axis = plt.subplots(figsize=(5, 5))
             axis.set_axis_off()
-            image = rasterio.plot.show(read_raster(raster_pathname, i),
-                ax=axis, cmap=colour_map, vmin=0, vmax=1)
+            image = rasterio.plot.show(
+                read_raster(raster_pathname, i),
+                ax=axis,
+                cmap=colour_map,
+                vmin=0,
+                vmax=1,
+            )
 
             with io.BytesIO() as buffer:
                 figure.savefig(buffer, format="raw")  # , bbox_inches="tight")
@@ -69,7 +67,8 @@ Options:
     <nr_rasters>  Number of rasters
     <animation>   Pathname of output animation
 """.format(
-    command = os.path.basename(sys.argv[0]))
+    command=os.path.basename(sys.argv[0])
+)
 
 
 def main():
