@@ -6,34 +6,33 @@ import os.path
 import sys
 
 
-def rainfall_erosivity_factor(
-        array_shape,
-        partition_shape):
+def rainfall_erosivity_factor(array_shape, partition_shape):
     """
     Measure for the energy of raindrops hitting the soil and the rate of associated runoff
     """
     # For now, use the global mean value: 2190 MJ mm ha-1 h-1 yr-1
     return lfr.create_array(
-        array_shape=array_shape, partition_shape=partition_shape,
-        dtype=np.dtype(np.float32), fill_value=2190)
+        array_shape=array_shape,
+        partition_shape=partition_shape,
+        dtype=np.dtype(np.float32),
+        fill_value=2190,
+    )
 
 
-def soil_erodibility_factor(
-        array_shape,
-        partition_shape):
+def soil_erodibility_factor(array_shape, partition_shape):
     """
     Measure for the erodibility
     """
     # For now, use 0.2
     return lfr.create_array(
-        array_shape=array_shape, partition_shape=partition_shape,
-        dtype=np.dtype(np.float32), fill_value=0.2)
+        array_shape=array_shape,
+        partition_shape=partition_shape,
+        dtype=np.dtype(np.float32),
+        fill_value=0.2,
+    )
 
 
-def slope_length(
-        dem,
-        cell_size,
-        partition_shape):
+def slope_length(dem, cell_size, partition_shape):
     """
     Measure for length of the slope
 
@@ -43,16 +42,18 @@ def slope_length(
     # TODO fill sinks
     flow_direction = lfr.d8_flow_direction(dem)
     material = lfr.create_array(
-        array_shape=dem.shape, partition_shape=partition_shape, dtype=dem.dtype, fill_value=1)
+        array_shape=dem.shape,
+        partition_shape=partition_shape,
+        dtype=dem.dtype,
+        fill_value=1,
+    )
     flow_accumulation = lfr.accu3(flow_direction, material)
     m = 0.4  # [0.2 - 0.6]
 
     return lfr.pow((flow_accumulation * cell_size) / 22.13, m)
 
 
-def slope_gradient(
-        dem,
-        cell_size):
+def slope_gradient(dem, cell_size):
     """
     Measure for steepness of the slope
 
@@ -65,10 +66,7 @@ def slope_gradient(
     return lfr.pow(lfr.sin(slope * 0.01745) / 0.09, n)
 
 
-def topographic_factor(
-        dem,
-        cell_size,
-        partition_shape):
+def topographic_factor(dem, cell_size, partition_shape):
     """
     High values imply high erosion rates
     """
@@ -78,9 +76,7 @@ def topographic_factor(
     return (l * s) / 100
 
 
-def cropping_management_factor(
-        array_shape,
-        partition_shape):
+def cropping_management_factor(array_shape, partition_shape):
     """
     Measure for the effectiveness of soil and crop management systems in preventing soil loss
 
@@ -88,13 +84,14 @@ def cropping_management_factor(
     """
     # For now, just use 0.4 (shrubs)
     return lfr.create_array(
-        array_shape=array_shape, partition_shape=partition_shape,
-        dtype=np.dtype(np.float32), fill_value=0.4)
+        array_shape=array_shape,
+        partition_shape=partition_shape,
+        dtype=np.dtype(np.float32),
+        fill_value=0.4,
+    )
 
 
-def conservation_practices_factor(
-        array_shape,
-        partition_shape):
+def conservation_practices_factor(array_shape, partition_shape):
     """
     Measure for the effectiveness of practices to reduce the amount and rate of water runoff
 
@@ -102,15 +99,15 @@ def conservation_practices_factor(
     """
     # For now, just use 1
     return lfr.create_array(
-        array_shape=array_shape, partition_shape=partition_shape,
-        dtype=np.dtype(np.float32), fill_value=1)
+        array_shape=array_shape,
+        partition_shape=partition_shape,
+        dtype=np.dtype(np.float32),
+        fill_value=1,
+    )
 
 
 @lfr.runtime_scope
-def usle(
-        dem_pathname,
-        soil_loss_pathname,
-        partition_shape):
+def usle(dem_pathname, soil_loss_pathname, partition_shape):
 
     # The runtime is started on all localities. This function is only called on the root
     # locality.
@@ -144,7 +141,8 @@ Options:
     <dem>        Pathname of input digital elevation model
     <soil_loss>  Pathname of output soil loss raster
 """.format(
-    command = os.path.basename(sys.argv[0]))
+    command=os.path.basename(sys.argv[0])
+)
 
 
 def main():

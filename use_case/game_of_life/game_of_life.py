@@ -6,13 +6,14 @@ import os.path
 import sys
 
 
-def initialize_generation(
-        array_shape,
-        partition_shape):
+def initialize_generation(array_shape, partition_shape):
 
     generation = lfr.create_array(
-        array_shape=array_shape, partition_shape=partition_shape,
-        dtype=np.dtype(np.float32), fill_value=0)
+        array_shape=array_shape,
+        partition_shape=partition_shape,
+        dtype=np.dtype(np.float32),
+        fill_value=0,
+    )
 
     fraction_alive_cells = 0.25
     generation = lfr.uniform(generation, 0, 1) <= fraction_alive_cells
@@ -20,22 +21,21 @@ def initialize_generation(
     return generation
 
 
-def save_generation(
-        array,
-        pathname,
-        generation):
+def save_generation(array, pathname, generation):
 
     lfr.to_gdal(array, "{}-{}.tif".format(pathname, generation))
 
 
-def next_generation(
-        generation):
+def next_generation(generation):
 
-    kernel = np.array([
+    kernel = np.array(
+        [
             [1, 1, 1],
             [1, 0, 1],
             [1, 1, 1],
-        ], dtype=np.uint8)
+        ],
+        dtype=np.uint8,
+    )
     nr_alive_cells = lfr.focal_sum(generation, kernel)
 
     # Next state of currently alive cells
@@ -45,21 +45,19 @@ def next_generation(
     # Next state of currently dead cells
     reproducing = nr_alive_cells == 3
 
-    generation = lfr.where(generation,
-            # True if alive and not under/overpopulated
-            ~ (underpopulated | overpopulated),
-            # True if dead with three neighbours
-            reproducing)
+    generation = lfr.where(
+        generation,
+        # True if alive and not under/overpopulated
+        ~(underpopulated | overpopulated),
+        # True if dead with three neighbours
+        reproducing,
+    )
 
     return generation
 
 
 @lfr.runtime_scope
-def game_of_life(
-        array_shape,
-        partition_shape,
-        nr_generations,
-        generation_pathname):
+def game_of_life(array_shape, partition_shape, nr_generations, generation_pathname):
 
     # The runtime is started on all localities. This function is only called on the root
     # locality.
@@ -88,7 +86,8 @@ Options:
     <nr_generations>    Number of generations to calculate
     <pathname>          Pathname of GeoTiffs
 """.format(
-    command = os.path.basename(sys.argv[0]))
+    command=os.path.basename(sys.argv[0])
+)
 
 
 def main():
