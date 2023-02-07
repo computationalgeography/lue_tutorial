@@ -8,7 +8,7 @@
 
 ## Use cases
 We have added relatively simple use-cases here, to illustrate what LUE can be used for. They
-are very simple. This is on purpose of course. LUE hides much of the complicated stuff to
+are very simple, which is on purpose of course. LUE hides much of the complicated stuff to
 perform very large models on large amounts of hardware.
 
 BTW, we accept pull-requests for additional use-cases, so please do contribute yours if you
@@ -18,3 +18,6 @@ Current list:
 
 - [Universal Soil Loss Equation (USLE)](use_case/usle)
 - [Conway's Game of Life](use_case/game_of_life)
+- [Merge raster](use_case/merge_raster)
+    - Run a non-LUE numerical simulation model concurrently for multiple areas, and aggregate
+      the results in a single LUE dataset.
