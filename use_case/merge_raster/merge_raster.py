@@ -55,9 +55,6 @@ def merge_raster(dataset_pathname):
     # 2: Spawn models and wait for them to finish writing results to the dataset
     command_lines = []
     process_id = 1
-    nr_tasks = 6
-    hyperslab = (0, 0, 6, 4)
-    hyperslab = "{} {} {} {}".format(*hyperslab)
 
     for idxs in itertools.product(range(3), range(2)):
         hyperslab = [idx * 20 for idx in idxs] + [20, 20]
@@ -80,7 +77,7 @@ def merge_raster(dataset_pathname):
     # 3: Use the dataset containing all simulation results
     ldm.assert_is_valid(dataset_pathname, fail_on_warning=False)
 
-    # TODO Extract slices to rasters and create an animation
+    # TODO Extract slices to GeoTIFF rasters and create an animation
 
 
 def main():
