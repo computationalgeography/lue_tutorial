@@ -16,7 +16,9 @@ def initialize_generation(array_shape, partition_shape):
     )
 
     fraction_alive_cells = 0.25
-    generation = lfr.uniform(generation, np.dtype(np.float32), 0, 1) <= fraction_alive_cells
+    generation = (
+        lfr.uniform(generation, np.dtype(np.float32), 0, 1) <= fraction_alive_cells
+    )
 
     return generation
 
