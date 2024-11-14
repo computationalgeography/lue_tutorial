@@ -1,11 +1,9 @@
 # LUE tutorial
 
-🚧 🚧 🚧 🚧 🚧 🚧 Work in progress. 🚧 🚧 🚧 🚧 🚧 🚧
-
 | Branch  | Status                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
 | ---     | ---                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
-| main    | [![Linux](https://github.com/computationalgeography/lue_tutorial/actions/workflows/linux.yml/badge.svg)](https://github.com/computationalgeography/lue_tutorial/actions/workflows/linux.yml) [![macOS](https://github.com/computationalgeography/lue_tutorial/actions/workflows/macos.yml/badge.svg)](https://github.com/computationalgeography/lue_tutorial/actions/workflows/macos.yml) [![Windows](https://github.com/computationalgeography/lue_tutorial/actions/workflows/windows.yml/badge.svg)](https://github.com/computationalgeography/lue_tutorial/actions/workflows/windows.yml) |
-| develop |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| [main](https://github.com/computationalgeography/lue_tutorial/tree/main)       | [![Linux](https://github.com/computationalgeography/lue_tutorial/actions/workflows/linux.yml/badge.svg?branch=main)](https://github.com/computationalgeography/lue_tutorial/actions/workflows/linux.yml) [![macOS](https://github.com/computationalgeography/lue_tutorial/actions/workflows/macos.yml/badge.svg?branch=main)](https://github.com/computationalgeography/lue_tutorial/actions/workflows/macos.yml) [![Windows](https://github.com/computationalgeography/lue_tutorial/actions/workflows/windows.yml/badge.svg?branch=main)](https://github.com/computationalgeography/lue_tutorial/actions/workflows/windows.yml)          |
+| [develop](https://github.com/computationalgeography/lue_tutorial/tree/develop) | [![Linux](https://github.com/computationalgeography/lue_tutorial/actions/workflows/linux.yml/badge.svg?branch=develop)](https://github.com/computationalgeography/lue_tutorial/actions/workflows/linux.yml) [![macOS](https://github.com/computationalgeography/lue_tutorial/actions/workflows/macos.yml/badge.svg?branch=develop)](https://github.com/computationalgeography/lue_tutorial/actions/workflows/macos.yml) [![Windows](https://github.com/computationalgeography/lue_tutorial/actions/workflows/windows.yml/badge.svg?branch=develop)](https://github.com/computationalgeography/lue_tutorial/actions/workflows/windows.yml) |
 
 
 ## Use cases
@@ -44,3 +42,7 @@ To be able to run one or more use-cases, the following steps must be performed f
     conda env create --file=environment/configuration/conda_environment.yml
     conda activate lue_tutorial
     ```
+
+In case you want / need to use the latest development version of LUE, checkout the develop branch before
+creating the Conda environment. That branch contains a slightly different `conda_environment.yml` and possibly
+updates to the use-case Python code.
