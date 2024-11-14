@@ -1,5 +1,6 @@
 name: lue_tutorial
 channels:
+- https://lue.computationalgeography.org/download/conda
 - conda-forge
 - nodefaults
 dependencies:
@@ -8,5 +9,5 @@ dependencies:
 - imageio
 - ipython  # Optional
 - matplotlib
-- lue==0.3.7
+- lue>0.3.7
 - rasterio

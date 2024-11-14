@@ -2,7 +2,7 @@ name: macOS
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "main", "develop" ]
   pull_request:
   workflow_dispatch:
 
@@ -46,6 +46,6 @@ jobs:
           export DYLD_INSERT_LIBRARIES=$(find $CONDA_PREFIX -name libtcmalloc_minimal.so.4)
 
           cd use_case/usle
-          wget --quiet https://lue.computationalgeography.org/download/lue_qa/elevation.tif
+          curl --remote-name --silent https://lue.computationalgeography.org/download/lue_qa/elevation.tif
           python usle.py 1000 elevation.tif usle.tif
           ls -l *.tif
