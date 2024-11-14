@@ -45,6 +45,7 @@ jobs:
           conda activate lue_tutorial
           export DYLD_INSERT_LIBRARIES=$(find $CONDA_PREFIX -name libtcmalloc_minimal.so.4)
 
-          wget https://lue.computationalgeography.org/download/lue_qa/elevation.tif
+          cd use_case/usle
+          wget --quiet https://lue.computationalgeography.org/download/lue_qa/elevation.tif
           python usle.py 1000 elevation.tif usle.tif
           ls -l *.tif
