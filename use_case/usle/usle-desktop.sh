@@ -7,7 +7,7 @@ set -e
 export LD_PRELOAD="/usr/lib/x86_64-linux-gnu/libtcmalloc_minimal.so.4"
 
 # This example DEM is downloaded from
-# https://www.data.gv.at/katalog/dataset/0454f5f3-1d8c-464e-847d-541901eb021a
+# https://www.data.gv.at/katalog/de/dataset/land-tirol_tirolgelnde
 # DGM 10m Tirol EPSG:31254
 # It is possible to use another DEM though. Note that the usle.py script currently contains a
 # hard-coded cell size. Be sure to update it in case your DEM has cells of different size.
