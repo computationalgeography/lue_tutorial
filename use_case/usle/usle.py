@@ -112,7 +112,7 @@ def usle(dem_pathname, soil_loss_pathname, partition_shape):
     # The runtime is started on all localities. This function is only called on the root
     # locality.
 
-    dem = lfr.from_gdal(dem_pathname, partition_shape)
+    dem = lfr.from_gdal(dem_pathname, partition_shape=partition_shape)
     cell_size = 10
 
     r = rainfall_erosivity_factor(dem.shape, partition_shape)
