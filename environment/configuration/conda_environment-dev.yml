@@ -1,5 +1,3 @@
 include: conda_environment.yml
 dependencies:
-- pre-commit
-- pyright
-- python-lsp-server
+  - pre-commit
