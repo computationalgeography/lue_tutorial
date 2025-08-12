@@ -1,16 +1,3 @@
-name: lue_tutorial
-channels:
-- https://lue.computationalgeography.org/download/conda
-- conda-forge
-- nodefaults
+include: conda_environment.yml
 dependencies:
-- docopt
-- gdal
-- imageio
-- ipython  # Optional
-- matplotlib
-- lue>0.3.7
-- rasterio
-- pre-commit
-- pyright
-- python-lsp-server
+  - pre-commit
