@@ -124,7 +124,7 @@ def usle(dem_pathname, soil_loss_pathname, partition_shape):
     # Same as on Wikipedia!
     a = r * k * ls * c * p
 
-    lfr.to_gdal(a, soil_loss_pathname, dem_pathname)
+    lfr.to_gdal(a, soil_loss_pathname, clone_name=dem_pathname)
 
     # The runtime will be stopped automatically on all localities once the computations
     # are done.
