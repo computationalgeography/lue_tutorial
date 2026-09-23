@@ -47,7 +47,7 @@ def slope_length(dem, cell_size, partition_shape):
         dtype=dem.dtype,
         fill_value=1,
     )
-    flow_accumulation = lfr.accu3(flow_direction, material)
+    flow_accumulation = lfr.accu(flow_direction, material)
     m = 0.4  # [0.2 - 0.6]
 
     return lfr.pow((flow_accumulation * cell_size) / 22.13, m)
@@ -124,7 +124,7 @@ def usle(dem_pathname, soil_loss_pathname, partition_shape):
     # Same as on Wikipedia!
     a = r * k * ls * c * p
 
-    lfr.to_gdal(a, soil_loss_pathname, dem_pathname)
+    lfr.to_gdal(a, soil_loss_pathname, clone_name=dem_pathname)
 
     # The runtime will be stopped automatically on all localities once the computations
     # are done.
@@ -140,9 +140,7 @@ Options:
     <nr_cells>   Size of one side of the partitions
     <dem>        Pathname of input digital elevation model
     <soil_loss>  Pathname of output soil loss raster
-""".format(
-    command=os.path.basename(sys.argv[0])
-)
+""".format(command=os.path.basename(sys.argv[0]))
 
 
 def main():
