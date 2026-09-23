@@ -8,4 +8,3 @@ dependencies:
   - imageio
   - matplotlib
   - lue==0.3.11
-  # - rasterio  # 20250812: Conda reports conflicts, only needed for postprocessing
