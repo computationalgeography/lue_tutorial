@@ -8,4 +8,4 @@ dependencies:
   - gdal
   - imageio
   - matplotlib
-  - lue>0.3.10
+  - lue>0.3.11
