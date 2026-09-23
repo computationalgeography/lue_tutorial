@@ -47,7 +47,7 @@ def slope_length(dem, cell_size, partition_shape):
         dtype=dem.dtype,
         fill_value=1,
     )
-    flow_accumulation = lfr.accu3(flow_direction, material)
+    flow_accumulation = lfr.accu(flow_direction, material)
     m = 0.4  # [0.2 - 0.6]
 
     return lfr.pow((flow_accumulation * cell_size) / 22.13, m)
@@ -140,9 +140,7 @@ Options:
     <nr_cells>   Size of one side of the partitions
     <dem>        Pathname of input digital elevation model
     <soil_loss>  Pathname of output soil loss raster
-""".format(
-    command=os.path.basename(sys.argv[0])
-)
+""".format(command=os.path.basename(sys.argv[0]))
 
 
 def main():
