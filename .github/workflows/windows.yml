@@ -2,27 +2,28 @@ name: Windows
 
 on:
   push:
-    branches: [ "main" ]
+    branches: ["main"]
   pull_request:
   workflow_dispatch:
 
 jobs:
   build:
-    runs-on: "windows-2022"
+    runs-on: "windows-2025"
 
     defaults:
       run:
         shell: bash -l {0}
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
-      - uses: conda-incubator/setup-miniconda@v3
+      - uses: conda-incubator/setup-miniconda@v4
         with:
-          miniforge-version: latest
           auto-update-conda: true
+          miniforge-version: latest
           conda-solver: "libmamba"
-          python-version: 3.12
+          conda-remove-defaults: true
+          python-version: 3.14
 
       - name: setup platform
         run: |
