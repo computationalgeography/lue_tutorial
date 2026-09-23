@@ -8,33 +8,32 @@ on:
 
 jobs:
   build:
-    runs-on: macos-latest
+    runs-on: macos-26
 
     defaults:
       run:
         shell: bash -l {0}
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
-      - uses: conda-incubator/setup-miniconda@v3
+      - uses: conda-incubator/setup-miniconda@v4
         with:
-          miniforge-version: latest
           auto-update-conda: true
+          miniforge-version: latest
           conda-solver: "libmamba"
-          python-version: 3.12
+          conda-remove-defaults: true
+          python-version: 3.14
 
       - name: setup platform
         run: |
           conda env create --file=environment/configuration/conda_environment.yml
           conda activate lue_tutorial
-          export DYLD_INSERT_LIBRARIES=$(find $CONDA_PREFIX -name libtcmalloc_minimal.so.4)
           python -c 'import lue; print(f"lue: {lue.__version__} ({lue.git_short_sha1})")'
 
       - name: game_of_life
         run: |
           conda activate lue_tutorial
-          export DYLD_INSERT_LIBRARIES=$(find $CONDA_PREFIX -name libtcmalloc_minimal.so.4)
 
           cd use_case/game_of_life
           python game_of_life.py 5000 1000 10 generation
@@ -43,9 +42,8 @@ jobs:
       - name: usle
         run: |
           conda activate lue_tutorial
-          export DYLD_INSERT_LIBRARIES=$(find $CONDA_PREFIX -name libtcmalloc_minimal.so.4)
 
           cd use_case/usle
-          curl --remote-name --silent https://lue.computationalgeography.org/download/lue_qa/elevation.tif
+          wget --quiet https://lue.computationalgeography.org/download/lue_qa/elevation.tif
           python usle.py 1000 elevation.tif usle.tif
           ls -l *.tif
